@@ -5,7 +5,7 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"files": { "ignoreUnknown": false, "ignore": [] },
+	"files": { "ignoreUnknown": false, "ignore": ["convex/_generated/**"] },
 	"formatter": { "enabled": true },
 	"organizeImports": { "enabled": true },
 	"linter": {
@@ -20,7 +20,10 @@
 					}
 				}
 			},
-			"recommended": true
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off"
+			}
 		}
 	}
 }
