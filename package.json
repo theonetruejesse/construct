@@ -1,41 +1,25 @@
 {
-	"name": "construct-b",
+	"name": "construct",
 	"version": "0.1.0",
 	"private": true,
-	"type": "module",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"scripts": {
-		"dev": "concurrently \"pnpm run dev:app\" \"pnpm run dev:convex\"",
-		"dev:app": "next dev --turbo",
-		"dev:convex": "convex dev",
-		"build": "next build",
-		"check": "biome check .",
-		"check:unsafe": "biome check --write --unsafe .",
-		"check:write": "biome check --write .",
-		"preview": "next build && next start",
-		"start": "next start",
-		"typecheck": "tsc --noEmit"
-	},
-	"dependencies": {
-		"@t3-oss/env-nextjs": "^0.12.0",
-		"convex": "^1.23.0",
-		"next": "^15.2.3",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"zod": "^3.24.2"
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "turbo run lint",
+		"check": "turbo run check",
+		"typecheck": "turbo run typecheck",
+		"format": "turbo run format",
+		"clean": "turbo run clean && rm -rf node_modules"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@tailwindcss/postcss": "^4.0.15",
-		"@types/node": "^20.14.10",
-		"@types/react": "^19.0.0",
-		"@types/react-dom": "^19.0.0",
-		"concurrently": "^9.1.2",
-		"postcss": "^8.5.3",
-		"tailwindcss": "^4.0.15",
-		"typescript": "^5.8.2"
+		"turbo": "latest"
 	},
-	"ct3aMetadata": {
-		"initVersion": "7.39.3"
-	},
-	"packageManager": "pnpm@10.6.1"
+	"packageManager": "pnpm@10.6.1",
+	"engines": {
+		"node": ">=18.0.0"
+	}
 }
