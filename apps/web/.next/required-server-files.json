@@ -96,7 +96,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/home/ubuntu/repos/construct",
+    "outputFileTracingRoot": "/Users/jesselee/dev/construct",
     "experimental": {
       "nodeMiddleware": false,
       "cacheLife": {
@@ -282,10 +282,10 @@
       "@construct/api"
     ],
     "turbopack": {
-      "root": "/home/ubuntu/repos/construct"
+      "root": "/Users/jesselee/dev/construct"
     }
   },
-  "appDir": "/home/ubuntu/repos/construct/apps/web",
+  "appDir": "/Users/jesselee/dev/construct/apps/web",
   "relativeAppDir": "apps/web",
   "files": [
     ".next/routes-manifest.json",
