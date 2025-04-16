@@ -47,3 +47,4 @@ yarn-error.log*
 # convex
 **/.convex/
 **/convex/_generated/
+apps/api/convex/_generated/
