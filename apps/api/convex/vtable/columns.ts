@@ -1,12 +1,101 @@
 import { v } from "convex/values";
-import { mutation } from "../_generated/server";
-import { Doc } from "../_generated/dataModel";
-import {
-  validateColumnType,
-  getDefaultValueForType,
-} from "./helpers/validators";
-import { cascadeDeleteColumn } from "./helpers/integrity";
-import { VTableColumnType } from "./helpers/types";
+import { mutation, MutationCtx } from "../_generated/server";
+import { Doc, Id } from "../_generated/dataModel";
+
+// ================ TYPES ================
+
+// Define allowed column types using as const for literal types
+export const ALLOWED_COLUMN_TYPES = ["text", "number", "boolean"] as const;
+
+// Create a TypeScript type from the allowed types
+export type VTableColumnType = (typeof ALLOWED_COLUMN_TYPES)[number];
+
+// Type for an assembled column
+export interface AssembledColumn {
+  id: Id<"vtableColumns">;
+  name: string;
+  type: string;
+  options: Record<string, any> | null;
+  order: number;
+}
+
+// Corresponding validator for AssembledColumn
+export const assembledColumnValidator = v.object({
+  id: v.id("vtableColumns"),
+  name: v.string(),
+  type: v.string(),
+  options: v.union(v.object({}), v.null()), // Match the assembled structure (null for missing)
+  order: v.number(),
+});
+
+// ================ VALIDATORS ================
+
+/**
+ * Validates if the provided column type is one of the allowed types.
+ * Throws an error if the type is invalid.
+ */
+export function validateColumnType(
+  type: string
+): asserts type is VTableColumnType {
+  if (!(ALLOWED_COLUMN_TYPES as readonly string[]).includes(type)) {
+    throw new Error(
+      `Invalid column type: ${type}. Allowed types are: ${ALLOWED_COLUMN_TYPES.join(
+        ", "
+      )}`
+    );
+  }
+}
+
+/**
+ * Gets the default value (as a string or undefined) for a given column type.
+ * This is used when creating new cells for a new column or row.
+ *
+ * @param type - The column type to get a default value for
+ * @param options - Optional configuration for the column (not currently used, but kept for future extensibility)
+ */
+export function getDefaultValueForType(
+  type: VTableColumnType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  options?: Record<string, any> | null
+): string | undefined {
+  switch (type) {
+    case "text":
+      return ""; // Default empty string for text
+    case "number":
+      return "0"; // Default "0" for number (stored as string)
+    case "boolean":
+      return "false"; // Default "false" for boolean (stored as string)
+    default:
+      // This should be unreachable due to validateColumnType, but belts and braces
+      const exhaustiveCheck: never = type;
+      throw new Error(`Unhandled column type: ${exhaustiveCheck}`);
+  }
+}
+
+// ================ CASCADE OPERATIONS ================
+
+/**
+ * Deletes a specific column and all its associated cells.
+ */
+export async function cascadeDeleteColumn(
+  ctx: MutationCtx,
+  columnId: Id<"vtableColumns">
+): Promise<void> {
+  // Find and delete all cells associated with this column
+  const cells = await ctx.db
+    .query("vtableCells")
+    .withIndex("byColumnId", (q) => q.eq("columnId", columnId))
+    .collect();
+
+  for (const cell of cells) {
+    await ctx.db.delete(cell._id);
+  }
+
+  // Delete the column itself
+  await ctx.db.delete(columnId);
+}
+
+// ================ OPERATIONS ================
 
 // Create a new column with default values for all rows
 export const createVTableColumn = mutation({

@@ -1,5 +1,22 @@
 import { v } from "convex/values";
 import { mutation } from "../_generated/server";
+import { Id } from "../_generated/dataModel";
+
+// ================ TYPES ================
+
+// Basic type for a single cell's data in the assembled view
+export interface CellData {
+  id: Id<"vtableCells"> | null;
+  value: string | null;
+}
+
+// Corresponding validator for CellData
+export const cellDataValidator = v.object({
+  id: v.union(v.id("vtableCells"), v.null()),
+  value: v.union(v.string(), v.null()),
+});
+
+// ================ OPERATIONS ================
 
 // Update the value of a specific cell
 export const updateCell = mutation({
@@ -27,5 +44,3 @@ export const updateCell = mutation({
     return cell._id;
   },
 });
-
-// TODO: Any other cell operations? (Likely handled by row/column deletes)

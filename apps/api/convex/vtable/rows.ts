@@ -1,8 +1,49 @@
 import { v } from "convex/values";
-import { mutation } from "../_generated/server";
-import { getDefaultValueForType } from "./helpers/validators";
-import { VTableColumnType } from "./helpers/types";
-import { cascadeDeleteRow } from "./helpers/integrity";
+import { mutation, MutationCtx } from "../_generated/server";
+import { Id } from "../_generated/dataModel";
+import { getDefaultValueForType, VTableColumnType } from "./columns";
+import { CellData, cellDataValidator } from "./cells";
+
+// ================ TYPES ================
+
+// Type for an assembled row, including its cells keyed by column ID
+export interface AssembledRow {
+  id: Id<"vtableRows">;
+  createdAt: number;
+  cells: Record<string, CellData>; // ColumnId -> CellData
+}
+
+// Corresponding validator for AssembledRow
+export const assembledRowValidator = v.object({
+  id: v.id("vtableRows"),
+  createdAt: v.number(),
+  cells: v.record(v.string(), cellDataValidator),
+});
+
+// ================ CASCADE OPERATIONS ================
+
+/**
+ * Deletes a specific row and all its associated cells.
+ */
+export async function cascadeDeleteRow(
+  ctx: MutationCtx,
+  rowId: Id<"vtableRows">
+): Promise<void> {
+  // Find and delete all cells associated with this row
+  const cells = await ctx.db
+    .query("vtableCells")
+    .withIndex("byRowId", (q) => q.eq("rowId", rowId))
+    .collect();
+
+  for (const cell of cells) {
+    await ctx.db.delete(cell._id);
+  }
+
+  // Delete the row itself
+  await ctx.db.delete(rowId);
+}
+
+// ================ OPERATIONS ================
 
 // Create a new row for a table, populating default cell values
 export const createRow = mutation({
@@ -56,5 +97,3 @@ export const deleteRow = mutation({
     return null;
   },
 });
-
-// TODO: Add other row operations: update (complex), delete (needs cascade)
