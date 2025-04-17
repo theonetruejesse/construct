@@ -1,35 +1,86 @@
-import { useConvexQuery, useConvexMutation } from "@convex-dev/react-query";
 import type { Id, VTableData, UpdateCellInput, AddColumnInput, AddRowInput } from "../vtable-types";
 import { useVTable } from "../state/vtable-context";
 
 /**
  * This file provides hooks for interacting with the Convex backend.
  * 
- * NOTE: This is a temporary implementation that uses mock data and types.
- * When integrated with the actual Convex backend, these hooks should be updated
- * to use the generated API types from Convex.
+ * NOTE: This is a placeholder implementation that will be replaced
+ * when integrated with the actual Convex backend. The actual implementation
+ * will use the Convex API client generated from the schema.
  */
 
-const mockApi: any = {
-  vtable: {
-    tables: {
-      listTables: { _name: "vtable/tables:listTables" },
-      getTableData: { _name: "vtable/tables:getTableData" },
-      createVTable: { _name: "vtable/tables:createVTable" },
-      deleteTable: { _name: "vtable/tables:deleteTable" },
-    },
-    columns: {
-      addColumn: { _name: "vtable/columns:addColumn" },
-      deleteColumn: { _name: "vtable/columns:deleteColumn" },
-    },
-    rows: {
-      addRow: { _name: "vtable/rows:addRow" },
-      deleteRow: { _name: "vtable/rows:deleteRow" },
-    },
+const mockTables = [
+  {
+    _id: "table1" as Id<"vtables">,
+    name: "Sample Table 1",
+    ownerId: "user1",
+    createdAt: Date.now(),
+    description: "A sample table for testing" as string | null,
+  },
+  {
+    _id: "table2" as Id<"vtables">,
+    name: "Sample Table 2",
+    ownerId: "user1",
+    createdAt: Date.now(),
+    description: "Another sample table for testing" as string | null,
+  },
+];
+
+const mockColumns = [
+  {
+    id: "col1" as Id<"vtableColumns">,
+    name: "Name",
+    type: "text" as "text" | "number" | "boolean" | "select" | "date",
+    options: null,
+    order: 0,
+  },
+  {
+    id: "col2" as Id<"vtableColumns">,
+    name: "Age",
+    type: "number" as "text" | "number" | "boolean" | "select" | "date",
+    options: { min: 0, max: 120 },
+    order: 1,
+  },
+  {
+    id: "col3" as Id<"vtableColumns">,
+    name: "Active",
+    type: "boolean" as "text" | "number" | "boolean" | "select" | "date",
+    options: null,
+    order: 2,
+  },
+];
+
+const mockRows = [
+  {
+    id: "row1" as Id<"vtableRows">,
+    createdAt: Date.now(),
     cells: {
-      updateCell: { _name: "vtable/cells:updateCell" },
-    }
-  }
+      col1: { id: "cell1" as Id<"vtableCells">, value: "John Doe" },
+      col2: { id: "cell2" as Id<"vtableCells">, value: 30 },
+      col3: { id: "cell3" as Id<"vtableCells">, value: true },
+    },
+  },
+  {
+    id: "row2" as Id<"vtableRows">,
+    createdAt: Date.now() - 1000 * 60 * 60,
+    cells: {
+      col1: { id: "cell4" as Id<"vtableCells">, value: "Jane Smith" },
+      col2: { id: "cell5" as Id<"vtableCells">, value: 25 },
+      col3: { id: "cell6" as Id<"vtableCells">, value: false },
+    },
+  },
+];
+
+const mockData: VTableData = {
+  table: {
+    _id: mockTables[0]!._id,
+    name: mockTables[0]!.name,
+    ownerId: mockTables[0]!.ownerId,
+    createdAt: mockTables[0]!.createdAt,
+    description: mockTables[0]!.description,
+  },
+  columns: mockColumns,
+  rows: mockRows,
 };
 
 /**
@@ -37,7 +88,7 @@ const mockApi: any = {
  * @returns List of VTables with their basic information
  */
 export function useVTables() {
-  return useConvexQuery(mockApi.vtable.tables.listTables);
+  return { data: mockTables, isLoading: false, error: null };
 }
 
 /**
@@ -48,10 +99,11 @@ export function useVTables() {
 export function useVTableData(tableId: Id<"vtables"> | null) {
   const { refreshCounter } = useVTable();
   
-  return useConvexQuery(
-    mockApi.vtable.tables.getTableData,
-    tableId ? { tableId } : "skip"
-  );
+  return {
+    data: tableId ? mockData : null,
+    isLoading: false,
+    error: null,
+  };
 }
 
 /**
@@ -59,7 +111,10 @@ export function useVTableData(tableId: Id<"vtables"> | null) {
  * @returns Function to create a new VTable
  */
 export function useCreateVTable() {
-  return useConvexMutation(mockApi.vtable.tables.createVTable);
+  return async (name: string, description?: string) => {
+    console.log("Creating VTable:", { name, description });
+    return "newTableId" as Id<"vtables">;
+  };
 }
 
 /**
@@ -67,7 +122,10 @@ export function useCreateVTable() {
  * @returns Function to delete a VTable
  */
 export function useDeleteVTable() {
-  return useConvexMutation(mockApi.vtable.tables.deleteTable);
+  return async (tableId: Id<"vtables">) => {
+    console.log("Deleting VTable:", tableId);
+    return true;
+  };
 }
 
 /**
@@ -76,11 +134,11 @@ export function useDeleteVTable() {
  */
 export function useUpdateCell() {
   const { refreshTable } = useVTable();
-  const updateCell = useConvexMutation(mockApi.vtable.cells.updateCell);
   
   return async (input: UpdateCellInput) => {
-    await updateCell(input);
+    console.log("Updating cell:", input);
     refreshTable();
+    return "cellId" as Id<"vtableCells">;
   };
 }
 
@@ -90,11 +148,11 @@ export function useUpdateCell() {
  */
 export function useAddColumn() {
   const { refreshTable } = useVTable();
-  const addColumn = useConvexMutation(mockApi.vtable.columns.addColumn);
   
   return async (input: AddColumnInput) => {
-    await addColumn(input);
+    console.log("Adding column:", input);
     refreshTable();
+    return "newColumnId" as Id<"vtableColumns">;
   };
 }
 
@@ -104,11 +162,11 @@ export function useAddColumn() {
  */
 export function useAddRow() {
   const { refreshTable } = useVTable();
-  const addRow = useConvexMutation(mockApi.vtable.rows.addRow);
   
   return async (input: AddRowInput) => {
-    await addRow(input);
+    console.log("Adding row:", input);
     refreshTable();
+    return "newRowId" as Id<"vtableRows">;
   };
 }
 
@@ -118,11 +176,11 @@ export function useAddRow() {
  */
 export function useDeleteColumn() {
   const { refreshTable } = useVTable();
-  const deleteColumn = useConvexMutation(mockApi.vtable.columns.deleteColumn);
   
   return async (columnId: Id<"vtableColumns">, tableId: Id<"vtables">) => {
-    await deleteColumn({ columnId, tableId });
+    console.log("Deleting column:", { columnId, tableId });
     refreshTable();
+    return true;
   };
 }
 
@@ -132,10 +190,10 @@ export function useDeleteColumn() {
  */
 export function useDeleteRow() {
   const { refreshTable } = useVTable();
-  const deleteRow = useConvexMutation(mockApi.vtable.rows.deleteRow);
   
   return async (rowId: Id<"vtableRows">, tableId: Id<"vtables">) => {
-    await deleteRow({ rowId, tableId });
+    console.log("Deleting row:", { rowId, tableId });
     refreshTable();
+    return true;
   };
 }
