@@ -1,10 +1,10 @@
 import { v } from "convex/values";
-import { query, QueryCtx } from "../_generated/server";
-import { Doc, Id } from "../_generated/dataModel";
+import type { Doc, Id } from "../_generated/dataModel";
+import { type QueryCtx, query } from "../_generated/server";
+import type { CellData } from "./cells";
+import { type AssembledColumn, assembledColumnValidator } from "./columns";
+import { type AssembledRow, assembledRowValidator } from "./rows";
 import { vtableDocValidator } from "./tables";
-import { AssembledColumn, assembledColumnValidator } from "./columns";
-import { AssembledRow, assembledRowValidator } from "./rows";
-import { CellData } from "./cells";
 
 // ================ TYPES ================
 
@@ -135,13 +135,16 @@ export const listVTables = query({
   handler: async (ctx, args) => {
     // TODO: Add permission checks - only return tables owned by the user
 
-    const q = args.ownerId
-      ? ctx.db
-          .query("vtables")
-          .withIndex("byOwner", (q) => q.eq("ownerId", args.ownerId!))
-      : ctx.db.query("vtables");
+    const query =
+      args.ownerId !== undefined
+        ? ctx.db
+            .query("vtables")
+            // Use the ownerId directly if it's defined
+            .withIndex("byOwner", (q) => q.eq("ownerId", args.ownerId))
+        : // Fallback to a full query if ownerId is not provided
+          ctx.db.query("vtables");
 
     // Consider adding ordering, e.g., by createdAt
-    return await q.order("desc").collect();
+    return await query.order("desc").collect();
   },
 });

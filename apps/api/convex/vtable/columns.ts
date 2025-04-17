@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { mutation, MutationCtx } from "../_generated/server";
-import { Doc, Id } from "../_generated/dataModel";
+import type { Doc, Id } from "../_generated/dataModel";
+import { type MutationCtx, mutation } from "../_generated/server";
 
 // ================ TYPES ================
 
@@ -65,10 +65,11 @@ export function getDefaultValueForType(
       return "0"; // Default "0" for number (stored as string)
     case "boolean":
       return "false"; // Default "false" for boolean (stored as string)
-    default:
+    default: {
       // This should be unreachable due to validateColumnType, but belts and braces
       const exhaustiveCheck: never = type;
       throw new Error(`Unhandled column type: ${exhaustiveCheck}`);
+    }
   }
 }
 
@@ -218,19 +219,19 @@ export const updateColumn = mutation({
 
       if (newOrder < currentOrder) {
         // Moving UP (to a lower index): Increment orders from newOrder up to currentOrder
-        otherColumns.forEach((col) => {
+        for (const col of otherColumns) {
           if (col.order >= newOrder && col.order < currentOrder) {
             shiftPromises.push(ctx.db.patch(col._id, { order: col.order + 1 }));
           }
-        });
+        }
       } else {
         // newOrder > currentOrder
         // Moving DOWN (to a higher index): Decrement orders from currentOrder down to newOrder
-        otherColumns.forEach((col) => {
+        for (const col of otherColumns) {
           if (col.order > currentOrder && col.order <= newOrder) {
             shiftPromises.push(ctx.db.patch(col._id, { order: col.order - 1 }));
           }
-        });
+        }
       }
       // Wait for all order shifts to complete
       if (shiftPromises.length > 0) {
