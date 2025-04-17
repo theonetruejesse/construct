@@ -23,6 +23,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@construct/biome": "workspace:*",
     "@construct/tsconfig": "workspace:*",
     "@types/node": "^22.10.10",
