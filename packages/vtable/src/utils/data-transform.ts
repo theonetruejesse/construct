@@ -1,4 +1,4 @@
-import { Column, Row, VTableData } from "../vtable-types";
+import type { Column, Row, VTableData } from "../vtable-types";
 
 /**
  * Transforms VTable data into a format compatible with TanStack Table
