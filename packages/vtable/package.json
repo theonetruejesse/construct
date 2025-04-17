@@ -9,6 +9,7 @@
     "format": "biome format src --write"
   },
   "dependencies": {
+    "@construct/api-client": "workspace:^",
     "@construct/ui": "workspace:*",
     "@convex-dev/react-query": "0.0.0-alpha.8",
     "@tanstack/react-table": "^8.21.2",

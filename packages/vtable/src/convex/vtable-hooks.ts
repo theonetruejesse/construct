@@ -1,12 +1,25 @@
 import type { Id, VTableData, UpdateCellInput, AddColumnInput, AddRowInput } from "../vtable-types";
 import { useVTable } from "../state/vtable-context";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "convex/react";
+import {
+  fetchVTables,
+  fetchVTableData,
+  createVTable,
+  deleteVTable,
+  updateCell,
+  addColumn,
+  addRow,
+  deleteColumn,
+  deleteRow
+} from "./vtable-client";
 
 /**
  * This file provides hooks for interacting with the Convex backend.
  * 
- * NOTE: This is a mock implementation that simulates Convex integration.
- * In a real implementation, this would use the Convex API client.
+ * NOTE: For development and testing, we're using a mock implementation
+ * that simulates Convex integration. In production, this would use the
+ * actual Convex client.
  */
 
 const mockData: VTableData = {
@@ -91,12 +104,20 @@ function transformConvexData(convexData: any): VTableData {
   };
 }
 
+const USE_CONVEX_API = false;
+
 /**
  * Hook to fetch all available VTables
  * @returns List of VTables with their basic information
  */
 export function useVTables() {
-  const [error] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<Array<{
+    _id: Id<"vtables">;
+    name: string;
+    description: string | null;
+  }> | null>(null);
   
   const mockTables = [
     {
@@ -115,9 +136,25 @@ export function useVTables() {
     },
   ];
 
+  const convexResult = USE_CONVEX_API ? useQuery(fetchVTables) : null;
+
+  useEffect(() => {
+    if (USE_CONVEX_API) {
+      if (convexResult) {
+        setData(convexResult);
+        setIsLoading(false);
+      } else {
+        setIsLoading(true);
+      }
+    } else {
+      setData(mockTables);
+      setIsLoading(false);
+    }
+  }, [convexResult]);
+
   return {
-    data: mockTables,
-    isLoading: false,
+    data: data || mockTables,
+    isLoading,
     error,
   };
 }
@@ -129,14 +166,31 @@ export function useVTables() {
  */
 export function useVTableData(tableId: Id<"vtables"> | null) {
   const { refreshCounter } = useVTable();
-  const [error] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<VTableData | null>(null);
   
+  const convexResult = USE_CONVEX_API && tableId 
+    ? useQuery(fetchVTableData, { tableId }) 
+    : null;
+
   useEffect(() => {
-  }, [refreshCounter]);
+    if (USE_CONVEX_API) {
+      if (convexResult) {
+        setData(transformConvexData(convexResult));
+        setIsLoading(false);
+      } else if (tableId) {
+        setIsLoading(true);
+      }
+    } else {
+      setData(tableId ? mockData : null);
+      setIsLoading(false);
+    }
+  }, [convexResult, tableId, refreshCounter]);
   
   return {
-    data: tableId ? mockData : null,
-    isLoading: false,
+    data: data,
+    isLoading,
     error,
   };
 }
@@ -146,10 +200,16 @@ export function useVTableData(tableId: Id<"vtables"> | null) {
  * @returns Function to create a new VTable
  */
 export function useCreateVTable() {
+  const convexMutation = USE_CONVEX_API ? useMutation(createVTable) : null;
+  
   return async (name: string, description?: string) => {
-    console.log("Creating VTable:", { name, description });
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return "newTableId" as Id<"vtables">;
+    if (USE_CONVEX_API && convexMutation) {
+      return await convexMutation({ name, description }) as Id<"vtables">;
+    } else {
+      console.log("Creating VTable:", { name, description });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return "newTableId" as Id<"vtables">;
+    }
   };
 }
 
@@ -158,10 +218,16 @@ export function useCreateVTable() {
  * @returns Function to delete a VTable
  */
 export function useDeleteVTable() {
+  const convexMutation = USE_CONVEX_API ? useMutation(deleteVTable) : null;
+  
   return async (tableId: Id<"vtables">) => {
-    console.log("Deleting VTable:", tableId);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return true;
+    if (USE_CONVEX_API && convexMutation) {
+      return await convexMutation({ tableId });
+    } else {
+      console.log("Deleting VTable:", tableId);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return true;
+    }
   };
 }
 
@@ -171,12 +237,19 @@ export function useDeleteVTable() {
  */
 export function useUpdateCell() {
   const { refreshTable } = useVTable();
+  const convexMutation = USE_CONVEX_API ? useMutation(updateCell) : null;
   
   return async (input: UpdateCellInput) => {
-    console.log("Updating cell:", input);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    refreshTable();
-    return "cellId" as Id<"vtableCells">;
+    if (USE_CONVEX_API && convexMutation) {
+      const result = await convexMutation(input);
+      refreshTable();
+      return result as Id<"vtableCells">;
+    } else {
+      console.log("Updating cell:", input);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      refreshTable();
+      return "cellId" as Id<"vtableCells">;
+    }
   };
 }
 
@@ -186,12 +259,19 @@ export function useUpdateCell() {
  */
 export function useAddColumn() {
   const { refreshTable } = useVTable();
+  const convexMutation = USE_CONVEX_API ? useMutation(addColumn) : null;
   
   return async (input: AddColumnInput) => {
-    console.log("Adding column:", input);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    refreshTable();
-    return "newColumnId" as Id<"vtableColumns">;
+    if (USE_CONVEX_API && convexMutation) {
+      const result = await convexMutation(input);
+      refreshTable();
+      return result as Id<"vtableColumns">;
+    } else {
+      console.log("Adding column:", input);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      refreshTable();
+      return "newColumnId" as Id<"vtableColumns">;
+    }
   };
 }
 
@@ -201,12 +281,19 @@ export function useAddColumn() {
  */
 export function useAddRow() {
   const { refreshTable } = useVTable();
+  const convexMutation = USE_CONVEX_API ? useMutation(addRow) : null;
   
   return async (input: AddRowInput) => {
-    console.log("Adding row:", input);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    refreshTable();
-    return "newRowId" as Id<"vtableRows">;
+    if (USE_CONVEX_API && convexMutation) {
+      const result = await convexMutation(input);
+      refreshTable();
+      return result as Id<"vtableRows">;
+    } else {
+      console.log("Adding row:", input);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      refreshTable();
+      return "newRowId" as Id<"vtableRows">;
+    }
   };
 }
 
@@ -216,12 +303,19 @@ export function useAddRow() {
  */
 export function useDeleteColumn() {
   const { refreshTable } = useVTable();
+  const convexMutation = USE_CONVEX_API ? useMutation(deleteColumn) : null;
   
   return async (columnId: Id<"vtableColumns">, tableId: Id<"vtables">) => {
-    console.log("Deleting column:", { columnId, tableId });
-    await new Promise(resolve => setTimeout(resolve, 500));
-    refreshTable();
-    return true;
+    if (USE_CONVEX_API && convexMutation) {
+      const result = await convexMutation({ columnId, tableId });
+      refreshTable();
+      return result;
+    } else {
+      console.log("Deleting column:", { columnId, tableId });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      refreshTable();
+      return true;
+    }
   };
 }
 
@@ -231,11 +325,18 @@ export function useDeleteColumn() {
  */
 export function useDeleteRow() {
   const { refreshTable } = useVTable();
+  const convexMutation = USE_CONVEX_API ? useMutation(deleteRow) : null;
   
   return async (rowId: Id<"vtableRows">, tableId: Id<"vtables">) => {
-    console.log("Deleting row:", { rowId, tableId });
-    await new Promise(resolve => setTimeout(resolve, 500));
-    refreshTable();
-    return true;
+    if (USE_CONVEX_API && convexMutation) {
+      const result = await convexMutation({ rowId, tableId });
+      refreshTable();
+      return result;
+    } else {
+      console.log("Deleting row:", { rowId, tableId });
+      await new Promise(resolve => setTimeout(resolve, 500));
+      refreshTable();
+      return true;
+    }
   };
 }
