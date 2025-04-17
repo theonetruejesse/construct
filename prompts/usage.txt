@@ -1,20 +1,16 @@
-read through and fully comprehend the protocol outlined in 
+<instructions>
+read through and fully comprehend the protocol outlined in
 @lgtm-protocol.md 
 
-follow our protocol's entire procedure, explictly, to help create a report.
-
-ignore any linting errors within the files we create within run.
-
-IMPORTANT: SHOW ALL YOUR WORK. 
-DO NOT STOP UNTIL YOU ARE COMPLETELY DONE WITH EVERY PHASE.
-YOU NEED TO FOLLOW EVERY PHASE.
-
-you are welcome to use all tools avaliable to you, within the specifications of our protocol. 
-the tools might be differently defined.
+follow our protocol's entire procedure, explicitly, and do not stop until you have a fully fleshed out report. 
+you need to follow the entire procedure, including the loops fully as specified in the protocol.
 
 IMPORTANT: DO NOT EXECUTE THE REPORT. I NEED TO APPROVE THE REPORT FIRST.
-IMPORTANT: DO NOT SIMULATE EXTERNAL TOOL USES OR FILE READ WRITES.
 
 use `run` as your run folder.
 
-answer our question:
+</instructions>
+
+<question>
+
+</question>
