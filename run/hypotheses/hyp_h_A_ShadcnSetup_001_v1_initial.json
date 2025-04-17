@@ -1,0 +1,44 @@
+{
+  "microHypothesisID": "h_A_ShadcnSetup_001",
+  "areaOfAnalysisID": "A_ShadcnSetup",
+  "version": 1,
+  "status": "Initial",
+  "confidence": 0.8,
+  "title": "Setting Up shadcn/ui Components in the Construct Project",
+  "description": "Setup shadcn/ui components in the construct project as a shared package to support VTable component implementation.",
+  "relevantEvidence": ["k_004", "k_006"],
+  "migrationPlan": {
+    "overview": "Create a new UI package in the construct project with shadcn/ui components, mirroring the structure and functionality of the mcp-vtable UI package.",
+    "steps": [
+      {
+        "id": "SS1",
+        "description": "Create a new UI package directory structure in packages/ui/"
+      },
+      {
+        "id": "SS2",
+        "description": "Create package.json with necessary dependencies and exports configuration"
+      },
+      {
+        "id": "SS3",
+        "description": "Create components.json with shadcn/ui configuration"
+      },
+      {
+        "id": "SS4",
+        "description": "Add required shadcn/ui components, starting with Table components"
+      },
+      {
+        "id": "SS5",
+        "description": "Add other required components like Button, Input, Label, Popover, Select, etc."
+      },
+      {
+        "id": "SS6",
+        "description": "Add base styles and reusable utilities from the source UI package"
+      }
+    ]
+  },
+  "openQuestions": [
+    "Should we use the same component styles and configuration as the source project?",
+    "Are there any specific customizations needed for the construct project design system?",
+    "Should we implement all shadcn/ui components or only the ones needed for VTable?"
+  ]
+}

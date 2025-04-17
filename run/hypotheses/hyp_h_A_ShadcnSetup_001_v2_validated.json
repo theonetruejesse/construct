@@ -1,0 +1,102 @@
+{
+  "microHypothesisID": "h_A_ShadcnSetup_001",
+  "areaOfAnalysisID": "A_ShadcnSetup",
+  "version": 2,
+  "status": "Validated",
+  "confidence": 0.95,
+  "title": "Setting Up shadcn/ui Components in the Construct Project",
+  "description": "Set up shadcn/ui components in the construct project as a shared package to support VTable component implementation, focusing on the minimal set of components needed initially and allowing for future expansion.",
+  "relevantEvidence": ["k_004", "k_006", "k_mcp_shadcn_components"],
+  "validationReference": "nc_h_A_ShadcnSetup_001_challenge",
+  "migrationPlan": {
+    "overview": "Create a new UI package in the construct project with shadcn/ui components, focusing on the essential components needed for VTable while maintaining a structure that allows for future expansion.",
+    "steps": [
+      {
+        "id": "SS1",
+        "description": "Create a new UI package directory structure in packages/ui/ with src/ directory for components"
+      },
+      {
+        "id": "SS2",
+        "description": "Create package.json with necessary dependencies including Radix UI primitives and utility libraries (clsx, tailwind-merge)"
+      },
+      {
+        "id": "SS3",
+        "description": "Create tsconfig.json for the UI package based on the shared tsconfig"
+      },
+      {
+        "id": "SS4",
+        "description": "Create components.json with shadcn/ui configuration, using the 'new-york' style to match mcp-vtable"
+      },
+      {
+        "id": "SS5",
+        "description": "Add the cn utility function for conditional class application"
+      },
+      {
+        "id": "SS6",
+        "description": "Add Table components (Table, TableHeader, TableBody, TableFooter, TableRow, TableCell) as the core requirement for VTable, along with their supporting hooks for sorting and filtering"
+      },
+      {
+        "id": "SS7",
+        "description": "Add Button component with all necessary variants for VTable actions"
+      },
+      {
+        "id": "SS8",
+        "description": "Add Input, Label, and Select components for editing and filtering"
+      },
+      {
+        "id": "SS9",
+        "description": "Add Popover, DropdownMenu, and Tooltip components for advanced UI interactions"
+      },
+      {
+        "id": "SS10",
+        "description": "Add Skeleton component for loading states"
+      },
+      {
+        "id": "SS11",
+        "description": "Add Dialog component for confirmations and modal forms"
+      },
+      {
+        "id": "SS12",
+        "description": "Create global.css with CSS variables for theming consistent with mcp-vtable"
+      },
+      {
+        "id": "SS13",
+        "description": "Create an index.ts file to export all components"
+      },
+      {
+        "id": "SS14",
+        "description": "Update the tailwind.config.js to include necessary plugins (tailwindcss-animate) and theme extensions"
+      },
+      {
+        "id": "SS15",
+        "description": "Create documentation on how to use and extend the UI components for future team reference"
+      }
+    ]
+  },
+  "answeredQuestions": [
+    {
+      "question": "Should we use the same component styles and configuration as the source project?",
+      "answer": "Yes, we should use the same component styles and configuration as the source project to maintain visual consistency. Our null challenge confirmed that mcp-vtable uses the 'new-york' style variant with custom CSS variables for theming, which we should replicate in the construct project."
+    },
+    {
+      "question": "Are there any specific customizations needed for the construct project design system?",
+      "answer": "Based on our null challenge findings, we need to maintain the CSS variables and theming approach used in mcp-vtable. The construct project's existing TailwindCSS setup is compatible with shadcn/ui, but we should ensure the tailwind.config.js includes the necessary plugins (tailwindcss-animate) and theme extensions to match mcp-vtable's customizations."
+    },
+    {
+      "question": "Should we implement all shadcn/ui components or only the ones needed for VTable?",
+      "answer": "We should implement the components needed for VTable plus a few additional ones that work closely with them. Our null challenge found that the Table component in mcp-vtable relies on Button, Input, Select, DropdownMenu, Dialog, and Popover components, so all of these should be included in the initial implementation for complete functionality."
+    },
+    {
+      "question": "How are shadcn/ui components implemented in mcp-vtable?",
+      "answer": "Our null challenge confirmed that mcp-vtable implements shadcn/ui components as direct source files rather than as a versioned package. Components are organized in a ui/ directory with each component having its own subdirectory. This approach allows for direct customization while maintaining the core functionality. We should follow this same approach in the construct project."
+    },
+    {
+      "question": "What customizations have been made to shadcn/ui components in mcp-vtable?",
+      "answer": "The Table component has been extended with sorting, filtering, and custom cell rendering capabilities to work with TanStack Table. Button, Input, and other components have custom variants defined through Tailwind classes. All components use CSS variables for theming defined in a global.css file. The cn utility function based on clsx and tailwind-merge is used for conditional class application."
+    },
+    {
+      "question": "Are there any compatibility issues with the construct project's existing dependencies?",
+      "answer": "Our null challenge verified that there are no compatibility issues with the construct project's existing dependencies. Since shadcn/ui components are implemented as direct source files rather than as a versioned package, we can ensure compatibility by directly controlling the implementation details."
+    }
+  ]
+}

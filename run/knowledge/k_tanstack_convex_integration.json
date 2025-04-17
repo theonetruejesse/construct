@@ -1,0 +1,55 @@
+{
+  "knowledgeID": "k_tanstack_convex_integration",
+  "title": "TanStack Table Integration with Convex",
+  "description": "Detailed analysis of how TanStack Table can be integrated with Convex for data management and real-time updates.",
+  "content": {
+    "overview": {
+      "compatibilityAssessment": "TanStack Table v8.21.2 is fully compatible with Convex's data model and real-time update capabilities. The integration leverages the @convex-dev/react-query adapter to bridge TanStack Query with Convex, enabling efficient data fetching, mutations, and real-time updates within the table component.",
+      "keyBenefits": "This integration allows for real-time collaborative tables where edits are synchronized across clients, with optimistic updates for a responsive user experience. The performance optimizations in TanStack Table like memoization can be maintained while using Convex's data model."
+    },
+    "dataTransformation": {
+      "convexToTanStack": "Convex data needs transformation to match TanStack Table's expected format. The assembleVTableData query in Convex is designed to structure the data in a way that's compatible with TanStack Table, organizing information into table metadata, columns, and rows with cells.",
+      "idHandling": "Convex uses Id<T> objects instead of numeric IDs. When integrating with TanStack Table, these can be converted to strings for stable identity comparison, or used directly with appropriate type handling. For memoization purposes, the .toString() method can be used on Convex IDs when direct comparison is needed.",
+      "dataStructure": "The recommended structure mirrors the mcp-vtable approach: a rows array with each row containing a cells object indexed by column ID. This structure allows for efficient lookups and updates while remaining compatible with TanStack Table's row model."
+    },
+    "optimisticUpdates": {
+      "pattern": "TanStack Query's optimistic update pattern works well with Convex mutations. The pattern involves three key callbacks: onMutate (prepare optimistic data), onSuccess (handle successful updates), and onError (roll back on failures).",
+      "implementation": "For cell updates, maintain local state for the current value and only send mutations when the value changes. Use the useConvexMutation hook from the adapter with optimistic updates to provide immediate feedback while sending the update to the server.",
+      "localStateHandling": "During editing, keep values in local state to prevent real-time updates from disrupting the user experience. When edits are committed, the mutations reflect the changes on the server, which then propagate to other clients through real-time updates."
+    },
+    "realTimeIntegration": {
+      "updateHandling": "The @convex-dev/react-query adapter automatically handles real-time updates from Convex by updating the query cache. When data changes on the server, the adapter triggers a re-render with the updated data.",
+      "conflictResolution": "Convex's causal consistency ensures operations are applied in a consistent order across clients. For handling conflicts during local edits, maintain local state and only commit changes when editing is complete, using last-write-wins semantics.",
+      "subscriptionModel": "The adapter automatically subscribes to real-time updates for active queries. This ensures that the table always displays the latest data without requiring manual refresh mechanisms."
+    },
+    "performanceConsiderations": {
+      "memoization": "TanStack Table's memoization patterns in components like VColumns and VRows remain effective with Convex data, as they primarily compare UI state properties like column sizing and ordering rather than deeply comparing data. Only minor adjustments for ID comparison may be needed.",
+      "queryOptimization": "Structure Convex queries to fetch exactly what's needed for the current view. For large tables, consider pagination or windowing to limit the amount of data transferred and rendered.",
+      "renderingEfficiency": "Use TanStack Table's built-in virtualization capabilities for large datasets, combined with proper memoization of row and column components to minimize unnecessary re-renders."
+    }
+  },
+  "sourceProject": "mcp-vtable",
+  "relevantFiles": [
+    "apps/api/convex/vtable/queries.ts",
+    "apps/api/convex/vtable/rows.ts",
+    "apps/api/convex/vtable/tables.ts"
+  ],
+  "references": [
+    {
+      "description": "TanStack Table documentation",
+      "uri": "https://tanstack.com/table/v8/docs/guide/introduction"
+    },
+    {
+      "description": "Convex React Query adapter",
+      "uri": "https://docs.convex.dev/react/react-query"
+    }
+  ],
+  "keywords": [
+    "TanStack Table",
+    "Convex",
+    "React Query",
+    "real-time updates",
+    "optimistic updates",
+    "data transformation"
+  ]
+}

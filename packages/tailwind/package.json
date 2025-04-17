@@ -1,0 +1,28 @@
+{
+  "name": "@construct/tailwind-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./native": "./native.ts",
+    "./web": "./web.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo node_modules",
+    "format": "../../node_modules/.bin/biome format --write .",
+    "lint": "../../node_modules/.bin/biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "postcss": "^8.5.1",
+    "tailwindcss": "catalog:",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@construct/biome": "workspace:*",
+    "@construct/tsconfig": "workspace:*",
+    "@types/node": "^22.10.10",
+    "typescript": "catalog:"
+  }
+}

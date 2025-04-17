@@ -1,0 +1,70 @@
+{
+  "microHypothesisID": "h_A_TanStackTable_001",
+  "areaOfAnalysisID": "A_TanStackTable",
+  "version": 1,
+  "status": "Refined",
+  "confidence": 0.95,
+  "title": "Migration of TanStack Table Implementation from mcp-vtable to construct",
+  "description": "Migrate the TanStack Table implementation from mcp-vtable to construct, preserving the component architecture, performance optimizations, and UX while adapting the data layer to use Convex with the official TanStack Query adapter.",
+  "relevantEvidence": ["k_003", "k_004", "k_007", "k_008", "k_009"],
+  "migrationPlan": {
+    "overview": "Migrate the TanStack Table implementation while maintaining the same component structure, memoization patterns, and user experience, replacing tRPC data fetching with Convex queries and mutations through the official TanStack Query adapter.",
+    "steps": [
+      {
+        "id": "TS1",
+        "description": "Install TanStack Table v8.21.2 and @convex-dev/react-query in the construct project"
+      },
+      {
+        "id": "TS2",
+        "description": "Set up the core table configuration with the same parameters (getCoreRowModel, defaultColumn settings)"
+      },
+      {
+        "id": "TS3",
+        "description": "Update the vtable-types.ts file to replace numeric IDs with Convex Id<\"vtables\"> types"
+      },
+      {
+        "id": "TS4",
+        "description": "Adapt the data transformation in vtable-query.tsx to work with Convex's document model"
+      },
+      {
+        "id": "TS5",
+        "description": "Replace tRPC query hooks with Convex queries using convexQuery helper from the official adapter"
+      },
+      {
+        "id": "TS6",
+        "description": "Migrate the VColumns component with its memoization optimizations to prevent unnecessary re-renders"
+      },
+      {
+        "id": "TS7",
+        "description": "Migrate the VRows component with its memoization strategy to optimize rendering performance"
+      },
+      {
+        "id": "TS8",
+        "description": "Replace tRPC server actions with Convex mutations in the VCell component's update logic"
+      },
+      {
+        "id": "TS9",
+        "description": "Implement optimistic updates for cell edits using TanStack Query's mutation options with Convex"
+      },
+      {
+        "id": "TS10",
+        "description": "Add error handling to gracefully handle failed mutations and synchronize with real-time updates"
+      }
+    ]
+  },
+  "answeredQuestions": [
+    {
+      "question": "How should we handle the transition from tRPC's server actions to Convex mutations for cell updates?",
+      "answer": "We should replace tRPC server actions with Convex mutations using the useConvexMutation hook from the official adapter. Instead of 'use server' actions, we'll create regular client-side handlers that call Convex mutations. These handlers will use TanStack Query's mutation options for optimistic updates, similar to the pattern: mutation.mutate(data, { onMutate, onError, onSettled })."
+    },
+    {
+      "question": "Will the memoization patterns need adaptation to work efficiently with Convex's data model?",
+      "answer": "The memoization patterns can largely remain unchanged as they focus on UI rendering optimizations rather than data fetching. The table state comparisons in the memoization functions will still work with Convex data. However, we may need to adjust equality checks that directly compare ID values to account for Convex's Id type, ensuring that string representation or proper ID comparison is used."
+    },
+    {
+      "question": "How should we handle potential race conditions between optimistic updates and Convex's real-time updates?",
+      "answer": "The TanStack Query adapter will handle most synchronization automatically. For optimistic updates, we'll use TanStack Query's 'onMutate' to apply local changes and 'onSettled' to ensure proper revalidation. We'll implement proper error handling in 'onError' to roll back optimistic updates if needed. Additionally, we'll maintain local state for cell edits that haven't been committed yet, similar to the VCell component's existing pattern of tracking lastValue vs current value."
+    }
+  ],
+  "rationale": "After analyzing both the source VTable implementation and the Convex TanStack Query adapter, we've determined that the migration can maintain the same component architecture and memoization patterns while adapting the data layer. The official adapter provides the tools needed to replace tRPC queries and mutations while keeping the same optimistic update patterns and real-time capabilities. The memoization strategies in the components focus on UI rendering optimizations and will remain effective with Convex data structures with minor adjustments for ID comparisons."
+}

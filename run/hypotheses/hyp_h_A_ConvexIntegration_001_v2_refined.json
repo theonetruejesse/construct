@@ -1,0 +1,62 @@
+{
+  "microHypothesisID": "h_A_ConvexIntegration_001",
+  "areaOfAnalysisID": "A_ConvexIntegration",
+  "version": 2,
+  "status": "Refined",
+  "confidence": 0.95,
+  "title": "Integration of Convex with TanStack Query for VTable Components",
+  "description": "Use the official Convex adapter for TanStack Query (@convex-dev/react-query) to integrate Convex with TanStack Query for the VTable component, enabling real-time updates and optimistic UI patterns.",
+  "relevantEvidence": ["k_003", "k_004", "k_005", "k_007"],
+  "migrationPlan": {
+    "overview": "Implement the official Convex-TanStack Query integration to enable reactive data updates with optimistic UI patterns for the VTable component.",
+    "steps": [
+      {
+        "id": "CI1",
+        "description": "Install required dependencies: @tanstack/react-query and @convex-dev/react-query"
+      },
+      {
+        "id": "CI2",
+        "description": "Update the providers.tsx file to set up both ConvexProvider and QueryClientProvider using the official integration pattern"
+      },
+      {
+        "id": "CI3",
+        "description": "Create a ConvexQueryClient and configure it with the existing ConvexReactClient"
+      },
+      {
+        "id": "CI4",
+        "description": "Configure QueryClient with convexQueryClient.hashFn() and convexQueryClient.queryFn() defaults"
+      },
+      {
+        "id": "CI5",
+        "description": "Connect the convexQueryClient to the queryClient using convexQueryClient.connect()"
+      },
+      {
+        "id": "CI6",
+        "description": "Update VTable query hooks to use useQuery with convexQuery() for data fetching"
+      },
+      {
+        "id": "CI7",
+        "description": "Update VTable mutation hooks to use useMutation with useConvexMutation() for optimistic updates"
+      },
+      {
+        "id": "CI8",
+        "description": "Implement optimistic update patterns specific to VTable operations using TanStack Query's mutation options"
+      }
+    ]
+  },
+  "answeredQuestions": [
+    {
+      "question": "Should we use the Custom Adapter Approach or the Real-time Subscription Integration?",
+      "answer": "We should use the official Convex adapter for TanStack Query (@convex-dev/react-query) rather than creating custom hooks. This approach is officially supported, well-documented, and provides the same benefits of real-time updates and optimistic UI patterns while being simpler to implement and maintain."
+    },
+    {
+      "question": "How will optimistic updates interact with Convex's real-time updates?",
+      "answer": "Using the official adapter, optimistic updates will work through TanStack Query's standard mutation patterns. When a mutation is triggered, TanStack Query will optimistically update the UI, and when Convex sends a real-time update with the actual result, it will automatically sync through the adapter. This provides a seamless experience without requiring manual query invalidation."
+    },
+    {
+      "question": "Will the performance be acceptable with both Convex and React Query running?",
+      "answer": "Yes, the performance should be excellent since the official adapter is designed specifically to work efficiently with both systems. The adapter eliminates typical TanStack Query polling, leveraging Convex's real-time WebSocket-based updates instead, which is more efficient than standard REST API polling patterns."
+    }
+  ],
+  "rationale": "The official Convex documentation provides a clear and well-supported approach for integrating with TanStack Query that is simpler and more maintainable than our previous custom integration proposal. This approach maintains all the benefits we were seeking (real-time updates, optimistic UI, etc.) while simplifying the implementation and ensuring better long-term compatibility and support."
+}

@@ -1,0 +1,73 @@
+{
+  "microHypothesisID": "h_A_ShadcnSetup_001",
+  "areaOfAnalysisID": "A_ShadcnSetup",
+  "version": 1,
+  "status": "Refined",
+  "confidence": 0.9,
+  "title": "Setting Up shadcn/ui Components in the Construct Project",
+  "description": "Set up shadcn/ui components in the construct project as a shared package to support VTable component implementation, focusing on the minimal set of components needed initially and allowing for future expansion.",
+  "relevantEvidence": ["k_004", "k_006"],
+  "migrationPlan": {
+    "overview": "Create a new UI package in the construct project with shadcn/ui components, focusing on the essential components needed for VTable while maintaining a structure that allows for future expansion.",
+    "steps": [
+      {
+        "id": "SS1",
+        "description": "Create a new UI package directory structure in packages/ui/ with src/ directory for components"
+      },
+      {
+        "id": "SS2",
+        "description": "Create package.json with necessary dependencies including Radix UI primitives and utility libraries"
+      },
+      {
+        "id": "SS3",
+        "description": "Create tsconfig.json for the UI package based on the shared tsconfig"
+      },
+      {
+        "id": "SS4",
+        "description": "Create components.json with shadcn/ui configuration, using the default style for consistency"
+      },
+      {
+        "id": "SS5",
+        "description": "Add Table components (Table, TableHeader, TableBody, TableFooter, TableRow, TableCell) as the core requirement for VTable"
+      },
+      {
+        "id": "SS6",
+        "description": "Add Button component for action buttons in VTable"
+      },
+      {
+        "id": "SS7",
+        "description": "Add Input, Label, and Select components for editing and filtering"
+      },
+      {
+        "id": "SS8",
+        "description": "Add Popover and Tooltip components for advanced UI interactions"
+      },
+      {
+        "id": "SS9",
+        "description": "Add Skeleton component for loading states"
+      },
+      {
+        "id": "SS10",
+        "description": "Create an index.ts file to export all components"
+      },
+      {
+        "id": "SS11",
+        "description": "Update the UI package exports to match the source project's export pattern"
+      }
+    ]
+  },
+  "answeredQuestions": [
+    {
+      "question": "Should we use the same component styles and configuration as the source project?",
+      "answer": "Yes, we should use the same component styles and configuration as the source project to maintain visual consistency and minimize the need for adaptation when migrating components. This means using the default shadcn/ui style and keeping the same component APIs and behavior."
+    },
+    {
+      "question": "Are there any specific customizations needed for the construct project design system?",
+      "answer": "Based on the existing construct project, we don't see any specific customizations needed at this stage. The project already uses TailwindCSS 4, which is compatible with shadcn/ui. We should maintain the default shadcn/ui styling to start with and make specific customizations only if required after the initial implementation."
+    },
+    {
+      "question": "Should we implement all shadcn/ui components or only the ones needed for VTable?",
+      "answer": "We should initially implement only the components needed for VTable to minimize the implementation time while ensuring all required functionality is available. However, we should structure the package to allow for easy addition of more components in the future. The essential components for VTable include Table-related components, Button, Input, Label, Select, Popover, and Skeleton."
+    }
+  ]
+}

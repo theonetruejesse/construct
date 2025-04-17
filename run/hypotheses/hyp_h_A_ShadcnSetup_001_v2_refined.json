@@ -1,0 +1,78 @@
+{
+  "microHypothesisID": "h_A_ShadcnSetup_001",
+  "areaOfAnalysisID": "A_ShadcnSetup",
+  "version": 2,
+  "status": "Refined",
+  "confidence": 0.95,
+  "title": "Setting Up shadcn/ui Components in the Construct Project with Specific Customizations",
+  "description": "Set up shadcn/ui components in the construct project as a shared package, maintaining the exact styling and customizations from the mcp-vtable project to ensure visual and functional consistency in the VTable component.",
+  "relevantEvidence": ["k_004", "k_006", "k_010"],
+  "migrationPlan": {
+    "overview": "Create a new UI package in the construct project with shadcn/ui components, matching the exact configuration, customizations, and export patterns from the mcp-vtable project to ensure a seamless migration of the VTable components.",
+    "steps": [
+      {
+        "id": "SS1",
+        "description": "Create a new UI package directory structure in packages/ui/ with src/ directory for components"
+      },
+      {
+        "id": "SS2",
+        "description": "Create package.json with necessary dependencies including Radix UI primitives and utility libraries, matching the export patterns from mcp-vtable"
+      },
+      {
+        "id": "SS3",
+        "description": "Create tsconfig.json for the UI package based on the shared tsconfig"
+      },
+      {
+        "id": "SS4",
+        "description": "Create components.json with shadcn/ui configuration, using the 'new-york' style and zinc base color to match mcp-vtable's configuration"
+      },
+      {
+        "id": "SS5",
+        "description": "Add the cn utility function for class name merging in src/index.ts"
+      },
+      {
+        "id": "SS6",
+        "description": "Add Table components (Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption) with exact styling and hover states from mcp-vtable"
+      },
+      {
+        "id": "SS7",
+        "description": "Add Input component with the same base styling and customizations used in VTable cells"
+      },
+      {
+        "id": "SS8",
+        "description": "Add Button component for action buttons in VTable, maintaining the same styling"
+      },
+      {
+        "id": "SS9",
+        "description": "Add Select component for dropdown selections, preserving the same functionality"
+      },
+      {
+        "id": "SS10",
+        "description": "Add Popover component for column options and settings menus"
+      },
+      {
+        "id": "SS11",
+        "description": "Add Label component for form inputs"
+      },
+      {
+        "id": "SS12",
+        "description": "Add Skeleton component for loading states with identical styling"
+      }
+    ]
+  },
+  "answeredQuestions": [
+    {
+      "question": "Should we use the same component styles and configuration as the source project?",
+      "answer": "Yes, we should use the exact same 'new-york' style variant and zinc base color configuration as the source project to maintain visual consistency. The customized component styles (especially for Table and Input) have specific modifications for the VTable use case that should be preserved."
+    },
+    {
+      "question": "Are there any specific customizations needed for the construct project design system?",
+      "answer": "Based on our analysis, we should maintain the exact customizations from mcp-vtable, including specific class names for table cells, borders, hover states, and input styling within cells. These customizations are integral to the VTable's appearance and functionality."
+    },
+    {
+      "question": "Should we implement all shadcn/ui components or only the ones needed for VTable?",
+      "answer": "We should implement only the components used by VTable, which include Table components, Input, Button, Select, Popover, Label, and Skeleton. These components have specific styling and behavior that's needed for VTable to function properly."
+    }
+  ],
+  "rationale": "After analyzing the mcp-vtable project in detail, we've discovered that the shadcn/ui components have specific configurations and customizations that are tightly integrated with the VTable component. To ensure a successful migration, we need to preserve these exact customizations rather than using default shadcn/ui components. The export pattern in package.json is also critical to maintain import paths throughout the VTable implementation."
+}
