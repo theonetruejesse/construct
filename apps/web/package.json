@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@construct/api": "workspace:*",
+    "@construct/api-client": "workspace:^",
     "@construct/ui": "workspace:^",
     "@construct/vtable": "workspace:^",
     "@t3-oss/env-nextjs": "^0.12.0",
