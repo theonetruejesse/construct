@@ -5,24 +5,27 @@
   "type": "module",
   "exports": {
     "./native": "./native.ts",
-    "./web": "./web.ts"
+    "./web": "./web.ts",
+    "./base": "./base.ts"
   },
   "license": "MIT",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
-    "format": "../../node_modules/.bin/biome format --write .",
-    "lint": "../../node_modules/.bin/biome check .",
-    "typecheck": "tsc --noEmit"
+    "format": "biome format --write .",
+    "lint": "biome check .",
+    "check": "biome check .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
   },
   "dependencies": {
     "postcss": "^8.5.1",
-    "tailwindcss": "catalog:",
+    "tailwindcss": "^4.0.15",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@construct/biome": "workspace:*",
     "@construct/tsconfig": "workspace:*",
     "@types/node": "^22.10.10",
-    "typescript": "catalog:"
+    "typescript": "^5.8.2"
   }
 }
