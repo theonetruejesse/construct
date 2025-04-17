@@ -1,24 +1,25 @@
 {
-  "name": "@construct/api",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "main": "./src/index.ts",
-  "scripts": {
-    "dev": "convex dev",
-    "build": "tsc",
-    "lint": "biome check .",
-    "check": "biome check .",
-    "check:write": "biome check --write .",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "convex": "^1.23.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@construct/biome": "workspace:*",
-    "@construct/tsconfig": "workspace:*",
-    "typescript": "^5.8.2"
-  }
+	"name": "@construct/api",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"main": "./src/index.ts",
+	"scripts": {
+		"dev": "convex dev",
+		"predev": "convex dev --run init --until-success",
+		"build": "tsc",
+		"lint": "biome check .",
+		"check": "biome check .",
+		"check:write": "biome check --write .",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"convex": "^1.23.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@construct/biome": "workspace:*",
+		"@construct/tsconfig": "workspace:*",
+		"typescript": "^5.8.2"
+	}
 }
