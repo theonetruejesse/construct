@@ -2,6 +2,10 @@ export * from "./vtable-types";
 
 export { VTable } from "./components/vtable";
 export { TableSelector } from "./components/table-selector";
+export { VCell } from "./components/vcell";
+export { VColumn } from "./components/vcolumn";
+export { VRow } from "./components/vrow";
+export { Checkbox } from "./components/checkbox";
 
 export { VTableProvider, useVTable } from "./state/vtable-context";
 
